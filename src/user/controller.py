@@ -1,6 +1,6 @@
 from src.user.dtos import UserSchema , LoginSchema 
 from sqlalchemy.orm import Session
-from fastapi import HTTPException ,status
+from fastapi import HTTPException ,status , Request
 from src.user.models import UserModel
 from pwdlib import PasswordHash
 import jwt
@@ -58,3 +58,10 @@ def login(body:LoginSchema,db:Session):
 
     return {"token":token}
 
+
+
+def is_authenticated(request:Request,db:Session):
+
+    token =request.headers.get("authorization")
+    print(token)
+    return "Done"
