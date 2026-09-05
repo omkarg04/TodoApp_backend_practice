@@ -14,7 +14,7 @@ task_routes =APIRouter(prefix="/tasks")
 
 @task_routes.post("/create",response_model=TaskResponseSchemaDTO,status_code=status.HTTP_201_CREATED)
 def create_task(body:TaskSchemaDTO ,db:Session = Depends(get_db),user:UserModel=Depends(is_authenticated)):
-    return controller.create_task(body,db)
+    return controller.create_task(body,db,user)
 
 @task_routes.get("/get_tasks" ,response_model=List[TaskResponseSchemaDTO], status_code=status.HTTP_200_OK)
 def get_tasks(db:Session = Depends(get_db),user:UserModel=Depends(is_authenticated)):
