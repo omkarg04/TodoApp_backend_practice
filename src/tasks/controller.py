@@ -16,8 +16,8 @@ def create_task(body:TaskSchemaDTO, db:Session,user:UserModel):
     return new_task
 
 
-def get_tasks(db:Session):
-    tasks = db.query(TaskModel).all()
+def get_tasks(db:Session,user:UserModel):
+    tasks = db.query(TaskModel).filter(TaskModel.user_id==user.id).all()
     return tasks
 
 def get_one_task(task_id:int,db:Session):
@@ -29,10 +29,12 @@ def get_one_task(task_id:int,db:Session):
 
 
 
-def update_task(body:TaskSchemaDTO,task_id:int,db:Session):
+def update_task(body:TaskSchemaDTO,task_id:int,db:Session,user:UserModel):
     one_task =db.query(TaskModel).get(task_id)
     if not one_task:
         raise HTTPException(404,detail="Task id is invalid")
+    if one_task.user_id !=user.id:
+        raise HTTPException(401,detail="You are not authorized to update this task")
 
 
     body = body.model_dump()
@@ -45,11 +47,12 @@ def update_task(body:TaskSchemaDTO,task_id:int,db:Session):
 
     return one_task   
 
-def delete_task(task_id:int,db:Session):
+def delete_task(task_id:int,db:Session,user:UserModel):
     one_task =db.query(TaskModel).get(task_id)
     if not one_task:
         raise HTTPException(404,detail="Task id is invalid")
-
+    if one_task.user_id !=user.id:
+        raise HTTPException(401,detail="You are not authorized to delete this task")
     db.delete(one_task)
     db.commit()
 
